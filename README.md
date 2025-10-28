@@ -28,13 +28,34 @@ Now you do!
 The calls performed by this tool are all non-destructive (only get* and list*
 calls are performed).
 
+## ✨ What's New in v2.0.0
+
+### 🎉 Auto-Update Check Feature
+- Automatically checks for newer versions on every execution
+- Non-blocking and can be disabled with `--no-version-check`
+- See [VERSION_UPDATE_FEATURE.md](VERSION_UPDATE_FEATURE.md)
+
+### 🚀 66 New AWS Services Added
+- **205 total services** now supported (was ~139)
+- **1,024 total operations** tested (was ~879)
+- New services include: Bedrock, Cost Optimization Hub, Geographic services, Observability, and more
+- See [NEW_SERVICES_ADDED.md](NEW_SERVICES_ADDED.md) for complete list
+
+### 📚 Comprehensive Documentation
+- [INSTALLATION.md](INSTALLATION.md) - Installation guide
+- [USAGE_EXAMPLE.md](USAGE_EXAMPLE.md) - Usage examples and patterns
+- [CUSTOMIZATION_SUMMARY.md](CUSTOMIZATION_SUMMARY.md) - Customization details
+- [UPDATE_SUMMARY.md](UPDATE_SUMMARY.md) - Latest changes
+
 ## Installation
 
-```
-git clone git@github.com:andresriancho/enumerate-iam.git
-cd enumerate-iam/
+```bash
+git clone https://github.com/Bar-EVA/EVA-enumerate-iam.git
+cd EVA-enumerate-iam/
 pip install -r requirements.txt
 ```
+
+For detailed installation instructions, see [INSTALLATION.md](INSTALLATION.md).
 
 ## Library
 
@@ -52,6 +73,28 @@ enumerate_iam(access_key,
 
 The output will contain all the enumerated permission information in a python
 dictionary.
+
+## Quick Start
+
+```bash
+# Basic usage
+./enumerate-iam.py \
+  --access-key AKIA... \
+  --secret-key SECRET... \
+  --region us-east-1
+
+# Skip version check for faster startup
+./enumerate-iam.py \
+  --no-version-check \
+  --access-key AKIA... \
+  --secret-key SECRET... \
+  --region us-east-1
+
+# Test version checker
+python test_version_check.py
+```
+
+For more examples, see [USAGE_EXAMPLE.md](USAGE_EXAMPLE.md).
 
 ## Other tools
 
