@@ -11,6 +11,10 @@ BRUTEFORCE_TESTS = {
         "list_skills",
         "list_skills_store_categories"
     ],
+    "accessanalyzer": [
+        "list_analyzers",
+        "list_policy_generations"
+    ],
     "acm": [
         "list_certificates"
     ],
@@ -797,6 +801,11 @@ BRUTEFORCE_TESTS = {
     ],
     "ram": [
         "get_resource_share_invitations"
+    ],
+    "resource-groups": [
+        "list_groups",
+        "list_group_resources",
+        "get_group_configuration"
     ],
     "rds": [
         "describe_db_engine_versions",

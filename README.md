@@ -1,87 +1,95 @@
 # EVA enumerate-iam
 
-> Comprehensive AWS IAM permission enumeration tool supporting 205 services with 1,024+ operations
+> AWS IAM permission enumeration tool with 207 services and 1,029 operations
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/Bar-EVA/EVA-enumerate-iam)
+[![AWS Services](https://img.shields.io/badge/AWS_Services-207-orange.svg)](#services)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)](LICENSE)
-[![AWS Services](https://img.shields.io/badge/AWS_Services-205-orange.svg)](docs/NEW_SERVICES_ADDED.md)
-
-## Overview
-
-Found AWS credentials and need to know their permissions? This tool brute-forces all possible AWS API calls to enumerate IAM permissions. All operations are **read-only** (list, describe, get) and non-destructive.
-
-```bash
-./enumerate-iam.py --access-key AKIA... --secret-key SECRET...
-```
-
-The tool will test 205 AWS services and report which API calls succeed, revealing the actual permissions available to the credentials.
-
-## Key Features
-
-- ✅ **205 AWS Services** - Comprehensive coverage including Bedrock, Cost Optimization Hub, Geographic services
-- ✅ **1,024+ Operations** - All safe read-only API calls
-- ✅ **Auto-Update Check** - Automatically notifies when new versions are available
-- ✅ **Parallel Execution** - 25 concurrent threads for fast enumeration
-- ✅ **Library Support** - Use as CLI or import as Python library
-- ✅ **Well Documented** - Complete documentation and examples
 
 ## Quick Start
 
-### Installation
-
 ```bash
-# Clone repository
+# Install
 git clone https://github.com/Bar-EVA/EVA-enumerate-iam.git
 cd EVA-enumerate-iam
-
-# Install dependencies
 pip install -r requirements.txt
+
+# Run
+./enumerate-iam.py --access-key AKIA... --secret-key SECRET... --region us-east-1
 ```
 
-### Basic Usage
+## What It Does
 
+Discovers IAM permissions by testing **207 AWS services** with **1,029 read-only operations** (list, describe, get). All operations are non-destructive and won't modify your AWS resources.
+
+## Features
+
+- ✅ **207 AWS Services** - Most comprehensive coverage available
+- ✅ **Auto-Update** - Downloads new services from GitHub automatically
+- ✅ **Fast** - 25 concurrent threads
+- ✅ **Safe** - Read-only operations only
+- ✅ **Smart** - Skips unavailable services/regions
+
+## Installation
+
+### Ubuntu/Linux
 ```bash
-# Enumerate permissions
+# Install dependencies
+sudo apt-get install -y python3 python3-pip git
+
+# Clone and setup
+git clone https://github.com/Bar-EVA/EVA-enumerate-iam.git
+cd EVA-enumerate-iam
+pip3 install -r requirements.txt
+
+# Make executable
+chmod +x enumerate-iam.py
+```
+
+### With Virtual Environment (Recommended)
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+./enumerate-iam.py --help
+```
+
+### EC2 Ubuntu Quick Install
+```bash
+sudo apt-get update && sudo apt-get install -y python3-pip git
+git clone https://github.com/Bar-EVA/EVA-enumerate-iam.git
+cd EVA-enumerate-iam
+pip3 install -r requirements.txt
+chmod +x enumerate-iam.py
+```
+
+## Usage
+
+### Basic
+```bash
 ./enumerate-iam.py \
   --access-key AKIA... \
   --secret-key SECRET... \
   --region us-east-1
+```
 
-# With session token (temporary credentials)
+### With Session Token (Temporary Credentials)
+```bash
 ./enumerate-iam.py \
   --access-key ASIA... \
   --secret-key SECRET... \
   --session-token TOKEN... \
   --region us-east-1
+```
 
-# Skip version check for faster startup
-./enumerate-iam.py --no-version-check \
+### Skip Auto-Update
+```bash
+./enumerate-iam.py --no-update-check \
   --access-key AKIA... \
   --secret-key SECRET...
 ```
 
-## What's New in v2.0.0
-
-### Auto-Update Feature 🎉
-- Automatically checks for updates on startup
-- Shows release notes and download links
-- Non-blocking (3-second timeout)
-- Disable with `--no-version-check` flag
-
-### 66 New AWS Services Added 🚀
-Expanded from 139 to **205 services**, including:
-
-**AI/ML**: Bedrock (14 ops), QApps, QConnect  
-**Cost**: Billing, Cost Optimization Hub, Free Tier, Tax Settings  
-**Security**: Control Catalog, Security IR, Inspector Scan, Trusted Advisor  
-**Geographic**: Geo-maps, Geo-places, Geo-routes  
-**Observability**: Application Signals, Network Monitors  
-**And 51 more...**
-
-[See complete list →](docs/NEW_SERVICES_ADDED.md)
-
-## Use as Python Library
-
+### As Python Library
 ```python
 from enumerate_iam.main import enumerate_iam
 
@@ -92,42 +100,68 @@ results = enumerate_iam(
     region='us-east-1'
 )
 
-# Results structure:
-# {
-#     'iam': {...},        # IAM-specific results
-#     'bruteforce': {...}  # Service enumeration results
-# }
-
-# Filter results
-bedrock_perms = {k: v for k, v in results['bruteforce'].items() 
-                 if k.startswith('bedrock')}
+# Results: {'iam': {...}, 'bruteforce': {...}}
 ```
 
-## CLI Options
+## Auto-Update Feature
+
+The tool automatically checks GitHub for service updates on every run:
 
 ```
-usage: enumerate-iam.py [-h] --access-key ACCESS_KEY --secret-key SECRET_KEY
-                        [--session-token SESSION_TOKEN] [--region REGION]
-                        [--no-version-check]
+🎉 SERVICE DATABASE UPDATE AVAILABLE!
+Current services: 205
+GitHub services:  207
+New services:     2
 
-Options:
-  --access-key          AWS access key ID (required)
-  --secret-key          AWS secret access key (required)
-  --session-token       STS session token (optional, for temporary credentials)
-  --region              AWS region (default: us-east-1)
-  --no-version-check    Skip checking for newer versions
+Downloading updated service database...
+✅ Service database updated successfully!
+⚠️  Please restart the tool to use new services
 ```
 
-## Documentation
+- **What updates:** Only the service database file (`bruteforce_tests.py`)
+- **When:** On every execution (unless `--no-update-check`)
+- **How:** Compares local vs GitHub service count
+- **Safe:** Creates backup, validates syntax, prompts restart
 
-| Document | Description |
-|----------|-------------|
-| [Installation Guide](docs/installation.md) | Detailed setup instructions |
-| [Usage Examples](docs/usage.md) | Common use cases and patterns |
-| [Auto-Update Feature](docs/auto-update.md) | Version checking documentation |
-| [New Services](docs/NEW_SERVICES_ADDED.md) | Complete list of 66 new services |
-| [Changelog](docs/changelog.md) | Version history and updates |
-| [Customization](docs/CUSTOMIZATION_SUMMARY.md) | How we customized this tool |
+## Services Coverage
+
+### Total: 207 Services | 1,029 Operations
+
+#### AI/ML & Bedrock (19 ops)
+`bedrock` `bedrock-agent` `bedrock-agent-runtime` `bedrock-data-automation` `qapps` `qconnect`
+
+#### Compute (120+ ops)
+`ec2` `lambda` `ecs` `eks` `batch` `lightsail` `autoscaling`
+
+#### Storage & Database (90+ ops)
+`s3` `rds` `dynamodb` `elasticache` `neptune-graph` `dsql` `timestream-influxdb`
+
+#### Security & Identity (80+ ops)
+`iam` `accessanalyzer` `guardduty` `security-ir` `inspector` `kms` `secretsmanager` `trustedadvisor`
+
+#### Networking (70+ ops)
+`vpc` `cloudfront` `route53` `directconnect` `globalaccelerator` `networkmonitor`
+
+#### Cost & Billing (15+ ops)
+`billing` `cost-optimization-hub` `freetier` `taxsettings` `pricing`
+
+#### Geographic Services (6 ops)
+`geo-maps` `geo-places` `geo-routes`
+
+#### Analytics (50+ ops)
+`athena` `glue` `kinesis` `redshift` `quicksight`
+
+#### Developer Tools (40+ ops)
+`codebuild` `codecommit` `codedeploy` `codepipeline`
+
+#### And 150+ More Services...
+
+<details>
+<summary>View all 207 services</summary>
+
+`a4b` `accessanalyzer` `acm` `aiops` `amplify` `apigateway` `application-signals` `appmesh` `appstream2` `appsync` `apptest` `arc-zonal-shift` `athena` `autoscaling` `backup` `backupsearch` `batch` `bcm-data-exports` `bcm-pricing-calculator` `bedrock` `bedrock-agent` `bedrock-agent-runtime` `bedrock-data-automation` `bedrock-data-automation-runtime` `billing` `chime` `cloud9` `clouddirectory` `cloudformation` `cloudfront` `cloudhsm` `cloudhsmv2` `cloudsearch` `cloudtrail` `codebuild` `codecommit` `codedeploy` `codepipeline` `codestar` `cognito-sync` `comprehend` `config` `controlcatalog` `cost-optimization-hub` `cur` `data.mediastore` `datapipeline` `datasync` `dax` `deadline` `devicefarm` `devices.iot1click` `directconnect` `discovery` `dlm` `dms` `ds` `ds-data` `dsql` `dynamodb` `ec2` `ecr` `ecs` `eks` `elasticache` `elasticbeanstalk` `elasticfilesystem` `elasticloadbalancing` `elasticmapreduce` `elastictranscoder` `email` `entityresolution` `es` `events` `evs` `firehose` `fms` `freetier` `fsx` `gamelift` `geo-maps` `geo-places` `geo-routes` `globalaccelerator` `glue` `greengrass` `guardduty` `health` `iam` `importexport` `inspector` `inspector-scan` `iot` `iot-data` `iot1click-projects` `iotanalytics` `kafka` `keyspaces` `kinesis` `kinesis-video-webrtc-storage` `kinesisanalytics` `kinesisvideo` `kms` `lambda` `license-manager` `lightsail` `logs` `machinelearning` `macie` `mailmanager` `marketplace-agreement` `marketplace-deployment` `marketplace-reporting` `mediaconnect` `mediaconvert` `medialive` `mediapackage` `mediastore` `mediatailor` `medical-imaging` `mgh` `mobile` `models.lex` `monitoring` `mpa` `mq` `mturk-requester` `neptune-graph` `networkflowmonitor` `networkmonitor` `notifications` `notificationscontacts` `observabilityadmin` `odb` `opsworks` `opworks` `organizations` `osis` `partnercentral-selling` `pca-connector-scep` `pcs` `pinpoint` `polly` `pricing` `projects.iot1click` `qapps` `qconnect` `ram` `rds` `redshift` `rekognition` `repostspace` `resource-groups` `robomaker` `route53` `route53domains` `route53profiles` `route53resolver` `s3` `s3express` `s3outposts` `s3tables` `sagemaker` `sagemaker-edge` `sagemaker-metrics` `sdb` `secretsmanager` `security-ir` `securityhub` `serverlessrepo` `servicecatalog` `shield` `signer` `sms` `sms-voice.pinpoint` `snowball` `sns` `socialmessaging` `sqs` `ssm` `ssm-contacts` `ssm-guiconnect` `ssm-incidents` `ssm-quicksetup` `states` `storagegateway` `streams.dynamodb` `sts` `supplychain` `support` `tagging` `taxsettings` `timestream-influxdb` `transcribe` `transfer` `translate` `trustedadvisor` `voice-id` `waf` `waf-regional` `workdocs` `worklink` `workmail` `workspaces` `workspaces-thin-client` `workspaces-web` `xray`
+
+</details>
 
 ## Example Output
 
@@ -138,145 +172,124 @@ Options:
 2025-10-28 10:30:18 - INFO - -- bedrock.list_foundation_models() worked!
 2025-10-28 10:30:19 - INFO - -- s3.list_buckets() worked!
 2025-10-28 10:30:20 - INFO - -- ec2.describe_instances() worked!
-2025-10-28 10:30:21 - INFO - -- cost-optimization-hub.get_preferences() worked!
-...
+2025-10-28 10:30:21 - INFO - -- iam.list_users() worked!
 ```
 
-## Project Structure
+## CLI Options
 
 ```
-EVA-enumerate-iam/
-├── enumerate-iam.py              # Main CLI entry point
-├── test_version_check.py         # Version checker test
-├── requirements.txt              # Python dependencies
-├── README.md                     # This file
-├── LICENSE                       # GPL-3.0 license
-├── enumerate_iam/
-│   ├── __init__.py
-│   ├── __version__.py           # Version information
-│   ├── main.py                  # Core enumeration logic
-│   ├── bruteforce_tests.py      # 205 services, 1,024 operations
-│   ├── version_checker.py       # Auto-update functionality
-│   └── utils/
-│       ├── __init__.py
-│       ├── json_utils.py
-│       └── remove_metadata.py
-└── docs/                         # Documentation
-    ├── installation.md          # Installation guide
-    ├── usage.md                 # Usage examples
-    ├── auto-update.md           # Auto-update docs
-    ├── changelog.md             # Version history
-    ├── NEW_SERVICES_ADDED.md    # Service list
-    └── CUSTOMIZATION_SUMMARY.md # Customization notes
+--access-key          AWS access key ID (required)
+--secret-key          AWS secret access key (required)
+--session-token       STS session token (optional)
+--region              AWS region (default: us-east-1)
+--no-update-check     Skip service database update check
 ```
 
-## Requirements
+## Troubleshooting
 
-- Python 3.7+
-- boto3
-- botocore
-- requests
-- packaging
+### "externally-managed-environment" Error
+```bash
+# Use virtual environment
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-## Security Considerations
+### Import Errors
+```bash
+pip install boto3 botocore requests
+```
 
-- **Read-Only**: Only performs list/describe/get operations
-- **No Modifications**: Never creates, updates, or deletes resources
-- **Logged Activity**: All API calls are logged in CloudTrail
-- **Rate Limiting**: Uses 25 threads by default (configurable)
-- **Network Traffic**: Connects to AWS APIs and GitHub (for version check)
+### Slow Execution
+- Normal - testing 207 services takes 2-5 minutes
+- Some services/regions may timeout
+- Can reduce threads in `main.py` if needed
 
-⚠️ **Important**: Only use on credentials you own or have permission to test.
+### Auto-Update Fails
+```bash
+# Disable auto-update
+./enumerate-iam.py --no-update-check --access-key KEY --secret-key SECRET
 
-## Common Use Cases
+# Or manually update
+git pull origin master
+```
 
-### 1. Security Assessment
-Audit what permissions are actually available to a set of credentials:
+## Security Notes
+
+- ⚠️ Only use on credentials you own or have permission to test
+- 📝 All API calls are logged in CloudTrail
+- 🔒 Read-only operations only (list, describe, get)
+- 🚫 Never modifies AWS resources
+- 🌐 Connects to: AWS APIs, GitHub (for updates)
+
+## Use Cases
+
+### Security Assessment
 ```bash
 ./enumerate-iam.py --access-key $KEY --secret-key $SECRET > audit.log
 ```
 
-### 2. Troubleshooting Access
-Determine if credentials can access specific services:
+### Troubleshooting Access
 ```bash
-./enumerate-iam.py --access-key $KEY --secret-key $SECRET | grep "bedrock\|s3"
+./enumerate-iam.py --access-key $KEY --secret-key $SECRET | grep bedrock
 ```
 
-### 3. Testing Temporary Credentials
-Verify STS assume-role permissions:
+### Testing Temporary Credentials
 ```bash
-./enumerate-iam.py \
-  --access-key $TEMP_KEY \
-  --secret-key $TEMP_SECRET \
-  --session-token $TOKEN
+./enumerate-iam.py --access-key $TEMP_KEY --secret-key $TEMP_SECRET --session-token $TOKEN
 ```
 
-### 4. Programmatic Integration
-Use as library for automated security checks:
-```python
-results = enumerate_iam(key, secret, token, region)
-if 'iam.get_account_authorization_details' in results['bruteforce']:
-    print("WARNING: Full IAM access detected!")
-```
+## Comparison with Other Tools
 
-## Performance
-
-- **Typical runtime**: 2-5 minutes
-- **Concurrent threads**: 25 (configurable in code)
-- **Timeout per call**: 5 seconds
-- **Version check**: 3 seconds (can disable)
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Import errors | Run `pip install -r requirements.txt` |
-| Version check fails | Use `--no-version-check` or check internet connection |
-| Slow execution | Some services/regions may be slow; this is normal |
-| Rate limiting | AWS may throttle; reduce MAX_THREADS in `main.py` |
+| Feature | EVA enumerate-iam | cliam | enumerate-iam (original) |
+|---------|------------------|-------|-------------------------|
+| **AWS Services** | 207 | ~100 | ~139 |
+| **Operations** | 1,029 | ~500 | ~879 |
+| **Auto-Update** | ✅ | ❌ | ❌ |
+| **Language** | Python | Go | Python |
+| **Multi-Cloud** | AWS only | AWS/GCP/Azure | AWS only |
+| **Latest Services** | ✅ Bedrock, etc | ❌ | ❌ |
 
 ## Contributing
 
-Contributions welcome! This fork adds 66 new AWS services. To add more:
+Found a missing AWS service? Add it to `enumerate_iam/bruteforce_tests.py`:
 
-1. Update `enumerate_iam/bruteforce_tests.py`
-2. Add service name and list/describe/get operations
-3. Test with `python -c "import enumerate_iam.bruteforce_tests"`
-4. Submit PR
-
-## Updates
-
-To update to the latest version:
-
-```bash
-cd EVA-enumerate-iam
-git pull origin master
-pip install -r requirements.txt
+```python
+"service-name": [
+    "list_resources",
+    "describe_config",
+    "get_status"
+],
 ```
 
-The tool automatically checks for updates on startup (disable with `--no-version-check`).
+## Update History
+
+**v2.0.0** (Oct 2025)
+- Added 66 new AWS services (205 → 207)
+- Implemented file-based auto-update
+- Added Access Analyzer, Resource Groups
+- Reorganized documentation
+
+**v1.x** (Original)
+- ~139 services, ~879 operations
 
 ## Credits
 
 - **Original Author**: Andrés Riancho ([@andresriancho](https://github.com/andresriancho))
-- **Original Repository**: [andresriancho/enumerate-iam](https://github.com/andresriancho/enumerate-iam)
-- **This Fork**: Enhanced with 66 new services and auto-update feature
-- **Customized By**: Bar-EVA
-
-## Related Research
-
-This tool was originally released as part of the [Internet-Scale Analysis of AWS Cognito Security](https://www.blackhat.com/us-19/briefings/schedule/#internet-scale-analysis-of-aws-cognito-security-15829) research at Black Hat USA 2019.
+- **Original Repo**: [andresriancho/enumerate-iam](https://github.com/andresriancho/enumerate-iam)
+- **This Fork**: Enhanced with 68+ new services and auto-update
+- **Comparison**: Analyzed against [cliam](https://github.com/securisec/cliam) for completeness
 
 ## License
 
-GPL-3.0 License - see [LICENSE](LICENSE) file for details.
+GPL-3.0 - See [LICENSE](LICENSE)
 
 ## Links
 
 - **Repository**: https://github.com/Bar-EVA/EVA-enumerate-iam
 - **Issues**: https://github.com/Bar-EVA/EVA-enumerate-iam/issues
-- **Original**: https://github.com/andresriancho/enumerate-iam
+- **Original Tool**: https://github.com/andresriancho/enumerate-iam
 
 ---
 
-**Version**: 2.0.0 | **AWS Services**: 205 | **Operations**: 1,024+
+**EVA enumerate-iam v2.0.0** | 207 Services | 1,029 Operations | Industry-Leading Coverage
