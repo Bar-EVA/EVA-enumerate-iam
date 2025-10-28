@@ -479,6 +479,9 @@ BRUTEFORCE_TESTS = {
         "describe_backups",
         "describe_file_systems"
     ],
+    "evs": [
+        "list_verification_jobs"
+    ],
     "gamelift": [
         "describe_ec2_instance_limits",
         "describe_fleet_attributes",
@@ -1144,5 +1147,290 @@ BRUTEFORCE_TESTS = {
         "get_groups",
         "get_sampling_rules",
         "get_sampling_statistic_summaries"
+    ],
+    "aiops": [
+        "list_applications",
+        "describe_applications",
+        "get_application"
+    ],
+    "application-signals": [
+        "list_service_level_objectives",
+        "get_service"
+    ],
+    "apptest": [
+        "list_test_cases",
+        "list_test_configurations",
+        "list_test_runs"
+    ],
+    "arc-zonal-shift": [
+        "list_managed_resources",
+        "list_zonal_shifts"
+    ],
+    "backupsearch": [
+        "list_search_jobs",
+        "list_search_result_export_jobs"
+    ],
+    "bcm-data-exports": [
+        "list_executions",
+        "list_exports"
+    ],
+    "bcm-pricing-calculator": [
+        "list_bill_estimates",
+        "list_bill_scenario_commitment_modifications",
+        "list_bill_scenario_usage_modifications",
+        "list_workload_estimate_usage"
+    ],
+    "bedrock": [
+        "list_custom_models",
+        "list_evaluation_jobs",
+        "list_foundation_models",
+        "list_guardrails",
+        "list_imported_models",
+        "list_inference_profiles",
+        "list_marketplace_model_endpoints",
+        "list_model_copy_jobs",
+        "list_model_customization_jobs",
+        "list_model_import_jobs",
+        "list_model_invocation_jobs",
+        "list_prompt_routers",
+        "list_provisioned_model_throughputs",
+        "get_model_invocation_logging_configuration"
+    ],
+    "bedrock-agent": [
+        "list_agents",
+        "list_agent_action_groups",
+        "list_agent_knowledge_bases",
+        "list_data_sources",
+        "list_knowledge_bases"
+    ],
+    "bedrock-agent-runtime": [
+        "get_agent_memory"
+    ],
+    "bedrock-data-automation": [
+        "list_blueprints",
+        "list_data_automation_projects"
+    ],
+    "bedrock-data-automation-runtime": [
+        "get_data_automation_status"
+    ],
+    "billing": [
+        "list_billing_views"
+    ],
+    "controlcatalog": [
+        "list_common_controls",
+        "list_controls",
+        "list_domains",
+        "list_objectives"
+    ],
+    "cost-optimization-hub": [
+        "list_enrollment_statuses",
+        "list_recommendation_summaries",
+        "get_preferences"
+    ],
+    "deadline": [
+        "list_farms",
+        "list_fleets",
+        "list_queues",
+        "list_workers"
+    ],
+    "ds-data": [
+        "list_data_sets"
+    ],
+    "dsql": [
+        "list_clusters"
+    ],
+    "entityresolution": [
+        "list_id_mapping_workflows",
+        "list_id_namespaces",
+        "list_matching_workflows",
+        "list_provider_services",
+        "list_schema_mappings"
+    ],
+    "freetier": [
+        "get_free_tier_usage"
+    ],
+    "geo-maps": [
+        "get_map_style_descriptor",
+        "get_sprites",
+        "get_tile"
+    ],
+    "geo-places": [
+        "get_place",
+        "list_keys"
+    ],
+    "geo-routes": [
+        "get_routes"
+    ],
+    "inspector-scan": [
+        "list_scans",
+        "get_scan_result"
+    ],
+    "iot-data": [
+        "list_named_shadows_for_thing"
+    ],
+    "iot1click-projects": [
+        "list_projects"
+    ],
+    "keyspaces": [
+        "list_keyspaces",
+        "list_tables"
+    ],
+    "kinesis-video-webrtc-storage": [
+        "list_storage_configurations"
+    ],
+    "mailmanager": [
+        "list_addon_instances",
+        "list_addon_subscriptions",
+        "list_archive_exports",
+        "list_archive_searches",
+        "list_archives",
+        "list_ingress_points",
+        "list_relay_rules",
+        "list_rule_sets",
+        "list_traffic_policies"
+    ],
+    "marketplace-agreement": [
+        "list_agreements"
+    ],
+    "marketplace-deployment": [
+        "list_deployment_parameters"
+    ],
+    "marketplace-reporting": [
+        "get_buyer_dashboard"
+    ],
+    "medical-imaging": [
+        "list_datastores",
+        "list_image_sets"
+    ],
+    "mpa": [
+        "list_privacy_budgets"
+    ],
+    "neptune-graph": [
+        "list_graphs",
+        "list_private_graph_endpoints"
+    ],
+    "networkflowmonitor": [
+        "list_monitors",
+        "list_scopes"
+    ],
+    "networkmonitor": [
+        "list_monitors"
+    ],
+    "notifications": [
+        "list_channels",
+        "list_event_rules",
+        "list_notification_configurations",
+        "list_notification_events",
+        "list_notification_hubs"
+    ],
+    "notificationscontacts": [
+        "list_email_contacts"
+    ],
+    "observabilityadmin": [
+        "list_resource_telemetry"
+    ],
+    "odb": [
+        "list_databases"
+    ],
+    "osis": [
+        "list_pipelines"
+    ],
+    "partnercentral-selling": [
+        "list_opportunities"
+    ],
+    "pca-connector-scep": [
+        "list_challenge_metadata",
+        "list_connectors"
+    ],
+    "pcs": [
+        "list_clusters",
+        "list_queues"
+    ],
+    "qapps": [
+        "list_library_items",
+        "list_q_apps"
+    ],
+    "qconnect": [
+        "list_assistants",
+        "list_knowledge_bases"
+    ],
+    "repostspace": [
+        "list_spaces"
+    ],
+    "route53profiles": [
+        "list_profile_associations",
+        "list_profile_resource_associations",
+        "list_profiles"
+    ],
+    "s3tables": [
+        "list_table_buckets",
+        "list_tables"
+    ],
+    "s3outposts": [
+        "list_endpoints",
+        "list_outposts_with_s3"
+    ],
+    "s3express": [
+        "list_express_one_zone_directories"
+    ],
+    "sagemaker-edge": [
+        "get_device_registration"
+    ],
+    "sagemaker-metrics": [
+        "batch_get_metrics"
+    ],
+    "security-ir": [
+        "list_cases",
+        "list_memberships"
+    ],
+    "socialmessaging": [
+        "list_linked_whatsapp_business_accounts"
+    ],
+    "ssm-contacts": [
+        "list_contacts"
+    ],
+    "ssm-guiconnect": [
+        "list_connections"
+    ],
+    "ssm-incidents": [
+        "list_incident_records",
+        "list_response_plans"
+    ],
+    "ssm-quicksetup": [
+        "list_configuration_managers"
+    ],
+    "supplychain": [
+        "list_data_integration_flows",
+        "list_data_lake_datasets",
+        "list_instances"
+    ],
+    "taxsettings": [
+        "list_tax_registrations"
+    ],
+    "timestream-influxdb": [
+        "list_db_instances",
+        "list_db_parameter_groups"
+    ],
+    "trustedadvisor": [
+        "list_checks",
+        "list_organization_recommendations",
+        "list_recommendations"
+    ],
+    "voice-id": [
+        "list_domains"
+    ],
+    "workspaces-thin-client": [
+        "list_devices",
+        "list_environments",
+        "list_software_sets"
+    ],
+    "workspaces-web": [
+        "list_browser_settings",
+        "list_identity_providers",
+        "list_network_settings",
+        "list_portals",
+        "list_trust_stores",
+        "list_user_access_logging_settings",
+        "list_user_settings"
     ]
 }
