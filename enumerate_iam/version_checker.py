@@ -1,183 +1,179 @@
 """
-Version checker for enumerate-iam
-Checks for updates from the GitHub repository
+Service database checker for enumerate-iam
+Checks GitHub for updates to bruteforce_tests.py and auto-downloads if needed
 """
 import logging
 import requests
-import json
-from packaging import version as pkg_version
+import os
+import tempfile
+import shutil
 
-from enumerate_iam.__version__ import __version__, __repo_url__
+from enumerate_iam.__version__ import __repo_url__
 
 
-def check_for_updates(timeout=3):
+def check_and_update_services(timeout=5):
     """
-    Check if a newer version is available on GitHub
+    Check GitHub for updates to bruteforce_tests.py and download if more services available
     
     Args:
         timeout: HTTP request timeout in seconds
         
     Returns:
         dict: {
-            'update_available': bool,
-            'current_version': str,
-            'latest_version': str,
-            'download_url': str,
-            'release_notes': str
+            'updated': bool,
+            'current_services': int,
+            'new_services': int,
+            'added_services': list
         }
     """
     logger = logging.getLogger()
     
     result = {
-        'update_available': False,
-        'current_version': __version__,
-        'latest_version': None,
-        'download_url': None,
-        'release_notes': None
+        'updated': False,
+        'current_services': 0,
+        'new_services': 0,
+        'added_services': []
     }
     
     try:
-        # Extract owner and repo from URL
-        # https://github.com/Bar-EVA/EVA-enumerate-iam -> Bar-EVA/EVA-enumerate-iam
+        # Get current service count
+        from enumerate_iam.bruteforce_tests import BRUTEFORCE_TESTS
+        current_services = set(BRUTEFORCE_TESTS.keys())
+        result['current_services'] = len(current_services)
+        
+        # Extract repo path
         repo_path = __repo_url__.replace('https://github.com/', '').strip('/')
         
-        # GitHub API endpoint for latest release
-        api_url = f"https://api.github.com/repos/{repo_path}/releases/latest"
+        # GitHub raw content URL for bruteforce_tests.py
+        raw_url = f"https://raw.githubusercontent.com/{repo_path}/master/enumerate_iam/bruteforce_tests.py"
         
-        logger.debug(f"Checking for updates at {api_url}")
+        logger.debug(f"Checking for service updates at {raw_url}")
         
-        response = requests.get(api_url, timeout=timeout)
-        
-        if response.status_code == 404:
-            # No releases yet, check commits instead
-            logger.debug("No releases found, checking commits")
-            return check_for_commits_update(repo_path, timeout)
-        
+        # Download the file from GitHub
+        response = requests.get(raw_url, timeout=timeout)
         response.raise_for_status()
         
-        release_data = response.json()
-        latest_version = release_data.get('tag_name', '').lstrip('v')
+        github_content = response.text
         
-        if not latest_version:
-            logger.debug("Could not determine latest version")
-            return result
+        # Parse the GitHub version to count services
+        github_services = parse_services_from_content(github_content)
+        result['new_services'] = len(github_services)
         
-        result['latest_version'] = latest_version
-        result['download_url'] = release_data.get('html_url', __repo_url__)
-        result['release_notes'] = release_data.get('body', '')
+        # Check if GitHub has more services
+        new_services = github_services - current_services
         
-        # Compare versions
-        try:
-            if pkg_version.parse(latest_version) > pkg_version.parse(__version__):
-                result['update_available'] = True
-        except Exception as e:
-            logger.debug(f"Version comparison failed: {e}")
-            # Fallback to string comparison
-            if latest_version != __version__:
-                result['update_available'] = True
+        if new_services:
+            result['added_services'] = sorted(list(new_services))
+            logger.info("")
+            logger.info("=" * 70)
+            logger.info(f"🎉 SERVICE DATABASE UPDATE AVAILABLE!")
+            logger.info(f"Current services: {result['current_services']}")
+            logger.info(f"GitHub services:  {result['new_services']}")
+            logger.info(f"New services:     {len(new_services)}")
+            logger.info("")
+            logger.info("New services found:")
+            for svc in sorted(new_services)[:10]:
+                logger.info(f"  + {svc}")
+            if len(new_services) > 10:
+                logger.info(f"  ... and {len(new_services) - 10} more")
+            logger.info("")
+            logger.info("Downloading updated service database...")
+            
+            # Download and replace the file
+            if download_and_replace_bruteforce(github_content):
+                result['updated'] = True
+                logger.info("✅ Service database updated successfully!")
+                logger.info(f"   Added {len(new_services)} new services")
+                logger.info("")
+                logger.info("⚠️  Please restart the tool to use new services")
+            else:
+                logger.info("⚠️  Could not update service database automatically")
+                logger.info("   Run: git pull origin master")
+            
+            logger.info("=" * 70)
+            logger.info("")
+        else:
+            logger.debug(f"Service database is up to date ({result['current_services']} services)")
         
         return result
         
     except requests.exceptions.Timeout:
-        logger.debug("Version check timed out")
+        logger.debug("Service check timed out")
     except requests.exceptions.RequestException as e:
-        logger.debug(f"Could not check for updates: {e}")
+        logger.debug(f"Could not check for service updates: {e}")
     except Exception as e:
-        logger.debug(f"Unexpected error checking for updates: {e}")
+        logger.debug(f"Unexpected error checking services: {e}")
     
     return result
 
 
-def check_for_commits_update(repo_path, timeout=3):
+def parse_services_from_content(content):
     """
-    Check for updates by comparing commits when no releases exist
+    Parse service names from bruteforce_tests.py content
     
     Args:
-        repo_path: GitHub repo path (owner/repo)
-        timeout: HTTP request timeout in seconds
+        content: File content as string
         
     Returns:
-        dict: Update information
+        set: Set of service names
     """
-    logger = logging.getLogger()
+    services = set()
     
-    result = {
-        'update_available': False,
-        'current_version': __version__,
-        'latest_version': 'latest commit',
-        'download_url': f"https://github.com/{repo_path}",
-        'release_notes': None
-    }
+    # Simple parser - look for lines like:    "service-name": [
+    import re
+    pattern = r'^\s*"([^"]+)":\s*\['
     
-    try:
-        # Get latest commit from master/main branch
-        api_url = f"https://api.github.com/repos/{repo_path}/commits/master"
-        response = requests.get(api_url, timeout=timeout)
-        
-        if response.status_code == 404:
-            # Try 'main' branch
-            api_url = f"https://api.github.com/repos/{repo_path}/commits/main"
-            response = requests.get(api_url, timeout=timeout)
-        
-        response.raise_for_status()
-        commit_data = response.json()
-        
-        latest_sha = commit_data.get('sha', '')[:7]
-        commit_message = commit_data.get('commit', {}).get('message', '')
-        
-        if latest_sha:
-            result['latest_version'] = f"commit {latest_sha}"
-            result['release_notes'] = commit_message
-            result['update_available'] = True  # Assume update available if we can fetch commits
-        
-        return result
-        
-    except Exception as e:
-        logger.debug(f"Could not check commits: {e}")
+    for line in content.split('\n'):
+        match = re.match(pattern, line)
+        if match:
+            service_name = match.group(1)
+            # Exclude the dict name itself
+            if service_name != 'BRUTEFORCE_TESTS':
+                services.add(service_name)
     
-    return result
+    return services
 
 
-def print_update_notification(update_info):
+def download_and_replace_bruteforce(content):
     """
-    Print a user-friendly update notification
+    Replace the local bruteforce_tests.py with new content
     
     Args:
-        update_info: dict from check_for_updates()
+        content: New file content
+        
+    Returns:
+        bool: True if successful
     """
-    logger = logging.getLogger()
-    
-    if not update_info['update_available']:
-        return
-    
-    logger.info("")
-    logger.info("=" * 70)
-    logger.info("🎉 UPDATE AVAILABLE!")
-    logger.info(f"Current version: {update_info['current_version']}")
-    logger.info(f"Latest version:  {update_info['latest_version']}")
-    logger.info("")
-    logger.info(f"Download: {update_info['download_url']}")
-    
-    if update_info['release_notes']:
-        notes = update_info['release_notes'][:200]
-        if len(update_info['release_notes']) > 200:
-            notes += "..."
-        logger.info(f"Release notes: {notes}")
-    
-    logger.info("")
-    logger.info("To update, run:")
-    logger.info("  cd /path/to/EVA-enumerate-iam")
-    logger.info("  git pull origin master")
-    logger.info("  pip install -r requirements.txt")
-    logger.info("=" * 70)
-    logger.info("")
+    try:
+        # Get the path to bruteforce_tests.py
+        import enumerate_iam.bruteforce_tests as bf_module
+        bf_path = bf_module.__file__
+        
+        # Create backup
+        backup_path = bf_path + '.backup'
+        shutil.copy2(bf_path, backup_path)
+        
+        # Write new content
+        with open(bf_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        # Verify it's valid Python
+        try:
+            compile(content, bf_path, 'exec')
+            return True
+        except SyntaxError:
+            # Restore backup if invalid
+            shutil.copy2(backup_path, bf_path)
+            return False
+        
+    except Exception as e:
+        logging.getLogger().debug(f"Could not replace bruteforce_tests.py: {e}")
+        return False
 
 
 def check_and_notify():
     """
-    Convenience function to check for updates and print notification
+    Main entry point - check for service updates and auto-download
     """
-    update_info = check_for_updates()
-    print_update_notification(update_info)
-    return update_info
+    return check_and_update_services()
 
