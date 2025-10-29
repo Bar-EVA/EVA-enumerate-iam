@@ -22,6 +22,8 @@ import logging
 import boto3
 import botocore
 import random
+import time
+import threading
 
 from botocore.client import Config
 from botocore.endpoint import MAX_POOL_CONNECTIONS
@@ -33,6 +35,32 @@ from enumerate_iam.bruteforce_tests import BRUTEFORCE_TESTS
 
 MAX_THREADS = 25
 CLIENT_POOL = {}
+RATE_LIMITER = None
+
+
+class RateLimiter:
+    def __init__(self, rate):
+        # rate: tokens per second (requests/second)
+        self.rate = float(rate)
+        self.capacity = max(self.rate, 1.0)
+        self.tokens = self.capacity
+        self.last = time.monotonic()
+        self.lock = threading.Lock()
+
+    def acquire(self):
+        if self.rate <= 0:
+            return
+        while True:
+            with self.lock:
+                now = time.monotonic()
+                elapsed = now - self.last
+                self.last = now
+                self.tokens = min(self.capacity, self.tokens + elapsed * self.rate)
+                if self.tokens >= 1.0:
+                    self.tokens -= 1.0
+                    return
+                wait = (1.0 - self.tokens) / self.rate
+            time.sleep(wait)
 
 
 def report_arn(candidate):
@@ -166,6 +194,9 @@ def check_one_permission(arg_tuple):
 
     logger.debug('Testing %s.%s() in region %s' % (service_name, operation_name, region))
 
+    if RATE_LIMITER:
+        RATE_LIMITER.acquire()
+
     try:
         action_response = action_function()
     except (botocore.exceptions.ClientError,
@@ -207,7 +238,7 @@ def configure_logging():
     urllib3.disable_warnings(botocore.vendored.requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 
-def enumerate_iam(access_key, secret_key, session_token, region):
+def enumerate_iam(access_key, secret_key, session_token, region, rate_limit=None):
     """IAM Account Enumerator.
 
     This code provides a mechanism to attempt to validate the permissions assigned
@@ -215,6 +246,10 @@ def enumerate_iam(access_key, secret_key, session_token, region):
     """
     output = dict()
     configure_logging()
+
+    # Initialize global rate limiter if requested
+    global RATE_LIMITER
+    RATE_LIMITER = RateLimiter(rate_limit) if rate_limit and float(rate_limit) > 0 else None
 
     output['iam'] = enumerate_using_iam(access_key, secret_key, session_token, region)
     output['bruteforce'] = enumerate_using_bruteforce(access_key, secret_key, session_token, region)

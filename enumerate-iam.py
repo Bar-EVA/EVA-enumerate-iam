@@ -21,6 +21,8 @@ def main():
     parser.add_argument('--region', help='AWS region to send API requests to', default='us-east-1')
     parser.add_argument('--no-update-check', action='store_true', 
                        help='Skip checking for service database updates')
+    parser.add_argument('--rate-limit', type=float, default=0.0,
+                       help='Global requests per second across all threads (0 = unlimited)')
 
     args = parser.parse_args()
 
@@ -44,7 +46,8 @@ def main():
     enumerate_iam(args.access_key,
                   args.secret_key,
                   args.session_token,
-                  args.region)
+                  args.region,
+                  rate_limit=args.rate_limit)
 
 
 if __name__ == '__main__':
