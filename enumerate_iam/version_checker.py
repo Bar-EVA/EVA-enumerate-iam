@@ -107,6 +107,59 @@ def check_and_update_services(timeout=5):
     return result
 
 
+def check_services_status(timeout=5):
+    """
+    Check GitHub for updates to bruteforce_tests.py (check-only; no download)
+
+    Args:
+        timeout: HTTP request timeout in seconds
+
+    Returns:
+        dict: {
+            'has_update': bool,
+            'current_services': int,
+            'github_services': int,
+            'added_services': list
+        }
+    """
+    logger = logging.getLogger()
+
+    status = {
+        'has_update': False,
+        'current_services': 0,
+        'github_services': 0,
+        'added_services': []
+    }
+
+    try:
+        from enumerate_iam.bruteforce_tests import BRUTEFORCE_TESTS
+        local_services = set(BRUTEFORCE_TESTS.keys())
+        status['current_services'] = len(local_services)
+
+        repo_path = __repo_url__.replace('https://github.com/', '').strip('/')
+        raw_url = f"https://raw.githubusercontent.com/{repo_path}/master/enumerate_iam/bruteforce_tests.py"
+
+        response = requests.get(raw_url, timeout=timeout)
+        response.raise_for_status()
+        github_content = response.text
+        github_services = parse_services_from_content(github_content)
+        status['github_services'] = len(github_services)
+
+        new_services = github_services - local_services
+        if new_services:
+            status['has_update'] = True
+            status['added_services'] = sorted(list(new_services))
+
+    except requests.exceptions.Timeout:
+        logger.debug("Service status check timed out")
+    except requests.exceptions.RequestException as e:
+        logger.debug(f"Could not check for service status: {e}")
+    except Exception as e:
+        logger.debug(f"Unexpected error checking service status: {e}")
+
+    return status
+
+
 def parse_services_from_content(content):
     """
     Parse service names from bruteforce_tests.py content
