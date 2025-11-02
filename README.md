@@ -32,20 +32,6 @@ Discovers IAM permissions by testing **207 AWS services** with **1,029 read-only
 
 ## Installation
 
-### Ubuntu/Linux
-```bash
-# Install dependencies
-sudo apt-get install -y python3 python3-pip git
-
-# Clone and setup
-git clone https://github.com/Bar-EVA/EVA-enumerate-iam.git
-cd EVA-enumerate-iam
-pip3 install -r requirements.txt
-
-# Make executable
-chmod +x enumerate-iam.py
-```
-
 ### With Virtual Environment (Recommended)
 ```bash
 python3 -m venv venv
@@ -54,7 +40,7 @@ pip install -r requirements.txt
 ./enumerate-iam.py --help
 ```
 
-### EC2 Ubuntu Quick Install
+### EC2 machine Quick Install
 ```bash
 sudo apt-get update && sudo apt-get install -y python3-pip git
 git clone https://github.com/Bar-EVA/EVA-enumerate-iam.git
@@ -73,36 +59,6 @@ chmod +x enumerate-iam.py
   --region us-east-1
 ```
 
-### With Session Token (Temporary Credentials)
-```bash
-./enumerate-iam.py \
-  --access-key ASIA... \
-  --secret-key SECRET... \
-  --session-token TOKEN... \
-  --region us-east-1
-```
-
-### Skip Auto-Update
-```bash
-./enumerate-iam.py --no-update-check \
-  --access-key AKIA... \
-  --secret-key SECRET...
-```
-
-### As Python Library
-```python
-from enumerate_iam.main import enumerate_iam
-
-results = enumerate_iam(
-    access_key='AKIA...',
-    secret_key='SECRET...',
-    session_token=None,
-    region='us-east-1'
-)
-
-# Results: {'iam': {...}, 'bruteforce': {...}}
-```
-
 ## Auto-Update Feature
 
 The tool automatically checks GitHub for service updates on every run:
@@ -119,7 +75,6 @@ Downloading updated service database...
 ```
 
 - **What updates:** Only the service database file (`bruteforce_tests.py`)
-- **When:** On every execution (unless `--no-update-check`)
 - **How:** Compares local vs GitHub service count
 - **Safe:** Creates backup, validates syntax, prompts restart
 
@@ -175,70 +130,6 @@ Downloading updated service database...
 2025-10-28 10:30:21 - INFO - -- iam.list_users() worked!
 ```
 
-## CLI Options
-
-```
---access-key          AWS access key ID (required)
---secret-key          AWS secret access key (required)
---session-token       STS session token (optional)
---region              AWS region (default: us-east-1)
---no-update-check     Skip service database update check
-```
-
-## Troubleshooting
-
-### "externally-managed-environment" Error
-```bash
-# Use virtual environment
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### Import Errors
-```bash
-pip install boto3 botocore requests
-```
-
-### Slow Execution
-- Normal - testing 207 services takes 2-5 minutes
-- Some services/regions may timeout
-- Can reduce threads in `main.py` if needed
-
-### Auto-Update Fails
-```bash
-# Disable auto-update
-./enumerate-iam.py --no-update-check --access-key KEY --secret-key SECRET
-
-# Or manually update
-git pull origin master
-```
-
-## Security Notes
-
-- ⚠️ Only use on credentials you own or have permission to test
-- 📝 All API calls are logged in CloudTrail
-- 🔒 Read-only operations only (list, describe, get)
-- 🚫 Never modifies AWS resources
-- 🌐 Connects to: AWS APIs, GitHub (for updates)
-
-## Use Cases
-
-### Security Assessment
-```bash
-./enumerate-iam.py --access-key $KEY --secret-key $SECRET > audit.log
-```
-
-### Troubleshooting Access
-```bash
-./enumerate-iam.py --access-key $KEY --secret-key $SECRET | grep bedrock
-```
-
-### Testing Temporary Credentials
-```bash
-./enumerate-iam.py --access-key $TEMP_KEY --secret-key $TEMP_SECRET --session-token $TOKEN
-```
-
 ## Comparison with Other Tools
 
 | Feature | EVA enumerate-iam | cliam | enumerate-iam (original) |
@@ -261,17 +152,6 @@ Found a missing AWS service? Add it to `enumerate_iam/bruteforce_tests.py`:
     "get_status"
 ],
 ```
-
-## Update History
-
-**v2.0.0** (Oct 2025)
-- Added 66 new AWS services (205 → 207)
-- Implemented file-based auto-update
-- Added Access Analyzer, Resource Groups
-- Reorganized documentation
-
-**v1.x** (Original)
-- ~139 services, ~879 operations
 
 ## Credits
 
