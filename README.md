@@ -1,9 +1,9 @@
 # EVA enumerate-iam
 
-> AWS IAM permission enumeration tool with 207 services and 939 operations
+> AWS IAM permission enumeration tool with 311 services and 1,999 operations
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/Bar-EVA/EVA-enumerate-iam)
-[![AWS Services](https://img.shields.io/badge/AWS_Services-207-orange.svg)](#services)
+[![AWS Services](https://img.shields.io/badge/AWS_Services-311-orange.svg)](#services)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)](LICENSE)
 
 ## Quick Start
@@ -20,11 +20,11 @@ pip install -r requirements.txt
 
 ## What It Does
 
-Discovers IAM permissions by testing **207 AWS services** with **939 read-only operations** (list, describe, get). All operations are non-destructive and won't modify your AWS resources.
+Discovers IAM permissions by testing **311 AWS services** with **1,999 read-only operations** (list, describe, get). All operations are non-destructive and won't modify your AWS resources.
 
 ## Features
 
-- ✅ **207 AWS Services** - Most comprehensive coverage available
+- ✅ **311 AWS Services** - Most comprehensive coverage available
 - ✅ **Auto-Update** - Downloads new services from GitHub automatically
 - ✅ **Fast** - 25 concurrent threads
 - ✅ **Safe** - Read-only operations only
@@ -116,7 +116,7 @@ The tool automatically pulls the latest updates from GitHub before each run:
 
 ## Services Coverage
 
-### Total: 207 Services | 939 Operations
+### Total: 311 Services | 1,999 Operations
 
 #### AI/ML & Bedrock (19 ops)
 `bedrock` `bedrock-agent` `bedrock-agent-runtime` `bedrock-data-automation` `qapps` `qconnect`
@@ -148,7 +148,7 @@ The tool automatically pulls the latest updates from GitHub before each run:
 #### And 150+ More Services...
 
 <details>
-<summary>View all 207 services</summary>
+<summary>View all 311 services</summary>
 
 `a4b` `accessanalyzer` `acm` `aiops` `amplify` `apigateway` `application-signals` `appmesh` `appstream2` `appsync` `apptest` `arc-zonal-shift` `athena` `autoscaling` `backup` `backupsearch` `batch` `bcm-data-exports` `bcm-pricing-calculator` `bedrock` `bedrock-agent` `bedrock-agent-runtime` `bedrock-data-automation` `bedrock-data-automation-runtime` `billing` `chime` `cloud9` `clouddirectory` `cloudformation` `cloudfront` `cloudhsm` `cloudhsmv2` `cloudsearch` `cloudtrail` `codebuild` `codecommit` `codedeploy` `codepipeline` `codestar` `cognito-sync` `comprehend` `config` `controlcatalog` `cost-optimization-hub` `cur` `data.mediastore` `datapipeline` `datasync` `dax` `deadline` `devicefarm` `devices.iot1click` `directconnect` `discovery` `dlm` `dms` `ds` `ds-data` `dsql` `dynamodb` `ec2` `ecr` `ecs` `eks` `elasticache` `elasticbeanstalk` `elasticfilesystem` `elasticloadbalancing` `elasticmapreduce` `elastictranscoder` `email` `entityresolution` `es` `events` `evs` `firehose` `fms` `freetier` `fsx` `gamelift` `geo-maps` `geo-places` `geo-routes` `globalaccelerator` `glue` `greengrass` `guardduty` `health` `iam` `importexport` `inspector` `inspector-scan` `iot` `iot-data` `iot1click-projects` `iotanalytics` `kafka` `keyspaces` `kinesis` `kinesis-video-webrtc-storage` `kinesisanalytics` `kinesisvideo` `kms` `lambda` `license-manager` `lightsail` `logs` `machinelearning` `macie` `mailmanager` `marketplace-agreement` `marketplace-deployment` `marketplace-reporting` `mediaconnect` `mediaconvert` `medialive` `mediapackage` `mediastore` `mediatailor` `medical-imaging` `mgh` `mobile` `models.lex` `monitoring` `mpa` `mq` `mturk-requester` `neptune-graph` `networkflowmonitor` `networkmonitor` `notifications` `notificationscontacts` `observabilityadmin` `odb` `opsworks` `opworks` `organizations` `osis` `partnercentral-selling` `pca-connector-scep` `pcs` `pinpoint` `polly` `pricing` `projects.iot1click` `qapps` `qconnect` `ram` `rds` `redshift` `rekognition` `repostspace` `resource-groups` `robomaker` `route53` `route53domains` `route53profiles` `route53resolver` `s3` `s3express` `s3outposts` `s3tables` `sagemaker` `sagemaker-edge` `sagemaker-metrics` `sdb` `secretsmanager` `security-ir` `securityhub` `serverlessrepo` `servicecatalog` `shield` `signer` `sms` `sms-voice.pinpoint` `snowball` `sns` `socialmessaging` `sqs` `ssm` `ssm-contacts` `ssm-guiconnect` `ssm-incidents` `ssm-quicksetup` `states` `storagegateway` `streams.dynamodb` `sts` `supplychain` `support` `tagging` `taxsettings` `timestream-influxdb` `transcribe` `transfer` `translate` `trustedadvisor` `voice-id` `waf` `waf-regional` `workdocs` `worklink` `workmail` `workspaces` `workspaces-thin-client` `workspaces-web` `xray`
 
@@ -170,8 +170,8 @@ The tool automatically pulls the latest updates from GitHub before each run:
 
 | Feature | EVA enumerate-iam | cliam | enumerate-iam (original) |
 |---------|------------------|-------|-------------------------|
-| **AWS Services** | 207 | ~100 | ~139 |
-| **Operations** | 939 | ~500 | ~879 |
+| **AWS Services** | 311 | ~100 | ~139 |
+| **Operations** | 1,999 | ~500 | ~879 |
 | **Auto-Update** | ✅ | ❌ | ❌ |
 | **Language** | Python | Go | Python |
 | **Multi-Cloud** | AWS only | AWS/GCP/Azure | AWS only |
@@ -208,4 +208,4 @@ GPL-3.0 - See [LICENSE](LICENSE)
 
 ---
 
-**EVA enumerate-iam v2.0.0** | 207 Services | 939 Operations | Industry-Leading Coverage
+**EVA enumerate-iam v2.0.0** | 311 Services | 1,999 Operations | Industry-Leading Coverage

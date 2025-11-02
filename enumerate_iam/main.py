@@ -95,7 +95,7 @@ def enumerate_using_bruteforce(access_key, secret_key, session_token, region):
 
     logger = logging.getLogger()
     logger.info('Attempting common-service describe / list brute force.')
-    logger.info('Testing 939 operations across 207 AWS services...')
+    logger.info('Testing 1,999 operations across 311 AWS services...')
 
     pool = ThreadPool(MAX_THREADS)
     args_generator = generate_args(access_key, secret_key, session_token, region)
@@ -127,7 +127,7 @@ def enumerate_using_bruteforce(access_key, secret_key, session_token, region):
     pool.close()
     pool.join()
     
-    logger.info(f'✅ Completed: tested {OPERATION_COUNTER["count"]} operations, found {OPERATION_COUNTER["found"]} allowed permissions')
+    logger.info(f'✅ Completed: tested {OPERATION_COUNTER["count"]}/1,999 operations, found {OPERATION_COUNTER["found"]} allowed permissions')
 
     return output
 
@@ -187,8 +187,8 @@ def check_one_permission(arg_tuple):
     
     # Progress tracking
     OPERATION_COUNTER['count'] += 1
-    if OPERATION_COUNTER['count'] % 50 == 0:
-        logger.info(f'Progress: tested {OPERATION_COUNTER["count"]}/939 operations, found {OPERATION_COUNTER["found"]} allowed')
+    if OPERATION_COUNTER['count'] % 100 == 0:
+        logger.info(f'Progress: tested {OPERATION_COUNTER["count"]}/1,999 operations, found {OPERATION_COUNTER["found"]} allowed')
 
     service_client = get_client(access_key, secret_key, session_token, service_name, region)
     if service_client is None:
