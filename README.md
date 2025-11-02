@@ -1,6 +1,6 @@
 # EVA enumerate-iam
 
-> AWS IAM permission enumeration tool with 207 services and 1,029 operations
+> AWS IAM permission enumeration tool with 207 services and 939 operations
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/Bar-EVA/EVA-enumerate-iam)
 [![AWS Services](https://img.shields.io/badge/AWS_Services-207-orange.svg)](#services)
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 ## What It Does
 
-Discovers IAM permissions by testing **207 AWS services** with **1,029 read-only operations** (list, describe, get). All operations are non-destructive and won't modify your AWS resources.
+Discovers IAM permissions by testing **207 AWS services** with **939 read-only operations** (list, describe, get). All operations are non-destructive and won't modify your AWS resources.
 
 ## Features
 
@@ -80,7 +80,7 @@ Downloading updated service database...
 
 ## Services Coverage
 
-### Total: 207 Services | 1,029 Operations
+### Total: 207 Services | 939 Operations
 
 #### AI/ML & Bedrock (19 ops)
 `bedrock` `bedrock-agent` `bedrock-agent-runtime` `bedrock-data-automation` `qapps` `qconnect`
@@ -135,7 +135,7 @@ Downloading updated service database...
 | Feature | EVA enumerate-iam | cliam | enumerate-iam (original) |
 |---------|------------------|-------|-------------------------|
 | **AWS Services** | 207 | ~100 | ~139 |
-| **Operations** | 1,029 | ~500 | ~879 |
+| **Operations** | 939 | ~500 | ~879 |
 | **Auto-Update** | ✅ | ❌ | ❌ |
 | **Language** | Python | Go | Python |
 | **Multi-Cloud** | AWS only | AWS/GCP/Azure | AWS only |
@@ -172,4 +172,4 @@ GPL-3.0 - See [LICENSE](LICENSE)
 
 ---
 
-**EVA enumerate-iam v2.0.0** | 207 Services | 1,029 Operations | Industry-Leading Coverage
+**EVA enumerate-iam v2.0.0** | 207 Services | 939 Operations | Industry-Leading Coverage

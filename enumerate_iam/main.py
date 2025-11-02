@@ -154,7 +154,7 @@ def get_client(access_key, secret_key, session_token, service_name, region):
 
     config = Config(connect_timeout=5,
                     read_timeout=5,
-                    retries={'max_attempts': 30},
+                    retries={'max_attempts': 3, 'mode': 'standard'},
                     max_pool_connections=MAX_POOL_CONNECTIONS * 2)
 
     try:
@@ -189,7 +189,7 @@ def check_one_permission(arg_tuple):
     except AttributeError:
         # The service might not have this action (this is most likely
         # an error with generate_bruteforce_tests.py)
-        logger.error('Remove %s.%s action' % (service_name, operation_name))
+        logger.debug('Remove %s.%s action' % (service_name, operation_name))
         return
 
     logger.debug('Testing %s.%s() in region %s' % (service_name, operation_name, region))
@@ -205,7 +205,7 @@ def check_one_permission(arg_tuple):
             botocore.exceptions.ReadTimeoutError):
         return
     except botocore.exceptions.ParamValidationError:
-        logger.error('Remove %s.%s action' % (service_name, operation_name))
+        logger.debug('Remove %s.%s action' % (service_name, operation_name))
         return
 
     msg = '-- %s.%s() worked!'
