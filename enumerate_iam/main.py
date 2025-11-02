@@ -36,6 +36,7 @@ from enumerate_iam.bruteforce_tests import BRUTEFORCE_TESTS
 MAX_THREADS = 25
 CLIENT_POOL = {}
 RATE_LIMITER = None
+OPERATION_COUNTER = {'count': 0, 'found': 0}
 
 
 class RateLimiter:
@@ -94,6 +95,7 @@ def enumerate_using_bruteforce(access_key, secret_key, session_token, region):
 
     logger = logging.getLogger()
     logger.info('Attempting common-service describe / list brute force.')
+    logger.info('Testing 939 operations across 207 AWS services...')
 
     pool = ThreadPool(MAX_THREADS)
     args_generator = generate_args(access_key, secret_key, session_token, region)
@@ -124,6 +126,8 @@ def enumerate_using_bruteforce(access_key, secret_key, session_token, region):
 
     pool.close()
     pool.join()
+    
+    logger.info(f'✅ Completed: tested {OPERATION_COUNTER["count"]} operations, found {OPERATION_COUNTER["found"]} allowed permissions')
 
     return output
 
@@ -177,8 +181,14 @@ def get_client(access_key, secret_key, session_token, service_name, region):
 
 
 def check_one_permission(arg_tuple):
+    global OPERATION_COUNTER
     access_key, secret_key, session_token, region, service_name, operation_name = arg_tuple
     logger = logging.getLogger()
+    
+    # Progress tracking
+    OPERATION_COUNTER['count'] += 1
+    if OPERATION_COUNTER['count'] % 50 == 0:
+        logger.info(f'Progress: tested {OPERATION_COUNTER["count"]}/939 operations, found {OPERATION_COUNTER["found"]} allowed')
 
     service_client = get_client(access_key, secret_key, session_token, service_name, region)
     if service_client is None:
@@ -208,6 +218,7 @@ def check_one_permission(arg_tuple):
         logger.debug('Remove %s.%s action' % (service_name, operation_name))
         return
 
+    OPERATION_COUNTER['found'] += 1
     msg = '-- %s.%s() worked!'
     args = (service_name, operation_name)
     logger.info(msg % args)
