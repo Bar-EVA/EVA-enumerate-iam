@@ -12,6 +12,7 @@ import os
 
 def main():
     # Auto-update: Pull latest changes from GitHub BEFORE any imports
+    print("🔄 Checking for updates from GitHub...", flush=True)
     try:
         # Get the script directory
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -27,13 +28,17 @@ def main():
         
         if result.returncode == 0:
             output = result.stdout.strip()
-            if 'Already up to date' not in output and output:
+            if 'Already up to date' in output:
+                print("✅ Already up to date")
+            elif output:
                 print(f"📥 Updated from GitHub:")
                 print(f"   {output}")
-                print()
-    except Exception:
-        # Silently fail if git pull fails - don't block main functionality
-        pass
+            print()
+    except subprocess.TimeoutExpired:
+        print("⚠️  Git pull timed out, continuing anyway...\n")
+    except Exception as e:
+        # Show error but don't block
+        print(f"⚠️  Could not check for updates: {type(e).__name__}\n")
 
     # Import after git pull to ensure latest code is loaded
     from enumerate_iam.main import enumerate_iam

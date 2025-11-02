@@ -96,6 +96,12 @@ chmod +x enumerate-iam.py
 The tool automatically pulls the latest updates from GitHub before each run:
 
 ```bash
+🔄 Checking for updates from GitHub...
+✅ Already up to date
+
+# OR if updates are available:
+
+🔄 Checking for updates from GitHub...
 📥 Updated from GitHub:
    Updating 5dd9480..78af30e
    Fast-forward
