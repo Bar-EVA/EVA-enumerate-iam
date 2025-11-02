@@ -61,22 +61,20 @@ chmod +x enumerate-iam.py
 
 ## Auto-Update Feature
 
-The tool automatically checks GitHub for service updates on every run:
+The tool automatically pulls the latest updates from GitHub before each run:
 
-```
-🎉 SERVICE DATABASE UPDATE AVAILABLE!
-Current services: 205
-GitHub services:  207
-New services:     2
-
-Downloading updated service database...
-✅ Service database updated successfully!
-⚠️  Please restart the tool to use new services
+```bash
+📥 Updated from GitHub:
+   Updating 5dd9480..78af30e
+   Fast-forward
+    enumerate_iam/main.py | 11 +++++++++++
+    1 file changed, 11 insertions(+)
 ```
 
-- **What updates:** Only the service database file (`bruteforce_tests.py`)
-- **How:** Compares local vs GitHub service count
-- **Safe:** Creates backup, validates syntax, prompts restart
+- **What updates:** Pulls all latest changes from the repository
+- **When:** On every execution (unless `--no-update`)
+- **How:** Runs `git pull origin master` automatically
+- **Safe:** Standard git pull, won't overwrite uncommitted local changes
 
 ## Services Coverage
 
