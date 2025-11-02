@@ -189,6 +189,19 @@ Found a missing AWS service? Add it to `enumerate_iam/bruteforce_tests.py`:
 ],
 ```
 
+## Regenerating Service List
+
+To regenerate the complete list of AWS services and operations from the AWS SDK:
+
+```bash
+cd enumerate_iam/
+git clone https://github.com/aws/aws-sdk-js.git
+python generate_bruteforce_tests.py
+rm -rf aws-sdk-js
+```
+
+This will analyze the AWS SDK and generate an updated `bruteforce_tests.py` with all available read-only operations.
+
 ## Credits
 
 - **Original Author**: Andrés Riancho ([@andresriancho](https://github.com/andresriancho))

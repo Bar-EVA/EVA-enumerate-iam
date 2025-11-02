@@ -46,7 +46,16 @@ def main():
 
     # Parse arguments
     parser = argparse.ArgumentParser(
-        description=f'Enumerate IAM permissions (v{__version__})'
+        description=f'Enumerate IAM permissions (v{__version__})',
+        epilog='''
+Regenerating Service List:
+  To regenerate the complete list of AWS services from the SDK:
+    cd enumerate_iam/
+    git clone https://github.com/aws/aws-sdk-js.git
+    python generate_bruteforce_tests.py
+    rm -rf aws-sdk-js
+        ''',
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
     parser.add_argument('--access-key', help='AWS access key', required=True)
