@@ -59,6 +59,38 @@ chmod +x enumerate-iam.py
   --region us-east-1
 ```
 
+### With Session Token (Temporary Credentials)
+```bash
+./enumerate-iam.py \
+  --access-key ASIA... \
+  --secret-key SECRET... \
+  --session-token TOKEN... \
+  --region us-east-1
+```
+
+### With Rate Limiting
+```bash
+./enumerate-iam.py \
+  --access-key AKIA... \
+  --secret-key SECRET... \
+  --rate-limit 100
+```
+
+## CLI Options
+
+```
+-h, --help            show this help message and exit
+--access-key ACCESS_KEY
+                      AWS access key
+--secret-key SECRET_KEY
+                      AWS secret key
+--session-token SESSION_TOKEN
+                      STS session token
+--region REGION       AWS region to send API requests to
+--rate-limit RATE_LIMIT
+                      Global requests per second across all threads (0 = unlimited)
+```
+
 ## Auto-Update Feature
 
 The tool automatically pulls the latest updates from GitHub before each run:
@@ -72,7 +104,7 @@ The tool automatically pulls the latest updates from GitHub before each run:
 ```
 
 - **What updates:** Pulls all latest changes from the repository
-- **When:** On every execution (unless `--no-update`)
+- **When:** On every execution (always runs before any command)
 - **How:** Runs `git pull origin master` automatically
 - **Safe:** Standard git pull, won't overwrite uncommitted local changes
 
