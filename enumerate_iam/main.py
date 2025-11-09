@@ -219,7 +219,7 @@ def check_one_permission(arg_tuple):
         return
 
     OPERATION_COUNTER['found'] += 1
-    msg = '-- %s.%s() worked!'
+    msg = '\033[92m-- %s.%s() worked!\033[0m'
     args = (service_name, operation_name)
     logger.info(msg % args)
 
@@ -289,7 +289,7 @@ def enumerate_using_iam(access_key, secret_key, session_token, region):
             botocore.exceptions.ReadTimeoutError):
         pass
     else:
-        logger.info('Run for the hills, get_account_authorization_details worked!')
+        logger.info('\033[92mRun for the hills, get_account_authorization_details worked!\033[0m')
         logger.info('-- %s', json.dumps(everything, indent=4, default=json_encoder))
 
         output['iam.get_account_authorization_details'] = remove_metadata(everything)

@@ -65,9 +65,10 @@ def parse_request_file(file_path):
             sys.exit(1)
         
         print(f"✅ Loaded credentials from file: {file_path}")
-        print(f"   AccessKeyId: {access_key[:20]}...")
+        print(f"   AccessKeyId:   {access_key}")
+        print(f"   SecretKey:     {secret_key[:30]}...{secret_key[-10:]}")
         if session_token:
-            print(f"   SessionToken: {session_token[:50]}...")
+            print(f"   SessionToken:  {session_token[:80]}...{session_token[-20:]}")
         print()
         
         return access_key, secret_key, session_token
