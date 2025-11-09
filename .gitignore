@@ -104,3 +104,7 @@ venv.bak/
 .mypy_cache/
 
 .idea/*
+
+# Example credentials file
+example_credentials.txt
+*credentials*.txt

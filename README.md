@@ -76,20 +76,41 @@ chmod +x enumerate-iam.py
   --rate-limit 100
 ```
 
+### From Request File
+Load credentials directly from an HTTP response file (e.g., AWS Cognito response):
+```bash
+./enumerate-iam.py -r credentials.txt
+```
+
+**Example file format:**
+```
+HTTP/2 200 OK
+Date: Sun, 09 Nov 2025 07:25:52 GMT
+Content-Type: application/x-amz-json-1.1
+
+{"Credentials":{"AccessKeyId":"AKIA...","SecretKey":"...","SessionToken":"..."}}
+```
+
+The parser automatically extracts credentials from the JSON body, skipping HTTP headers.
+
 ## CLI Options
 
 ```
 -h, --help            show this help message and exit
+-r REQUEST, --request REQUEST
+                      Path to file containing AWS credentials (HTTP response with JSON)
 --access-key ACCESS_KEY
                       AWS access key
 --secret-key SECRET_KEY
                       AWS secret key
 --session-token SESSION_TOKEN
                       STS session token
---region REGION       AWS region to send API requests to
+--region REGION       AWS region to send API requests to (default: us-east-1)
 --rate-limit RATE_LIMIT
                       Global requests per second across all threads (0 = unlimited)
 ```
+
+**Note:** Either use `-r/--request` to load credentials from a file, OR provide `--access-key` and `--secret-key` directly.
 
 ## Auto-Update Feature
 
