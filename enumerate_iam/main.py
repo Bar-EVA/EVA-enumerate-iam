@@ -116,20 +116,6 @@ def enumerate_using_bruteforce(access_key, secret_key, session_token, region):
         except KeyboardInterrupt:
             print('')
             return output
-    except botocore.exceptions.NoAuthTokenError:
-        # Credentials expired mid-scan, return what we have
-        results = []
-        
-        logger.warning('⚠️  Scan stopped due to credential expiration')
-        logger.warning(f'   Returning {OPERATION_COUNTER["found"]} permissions found before expiration')
-        
-        try:
-            pool.close()
-            pool.join()
-        except:
-            pass
-        
-        return output
 
     for thread_result in results:
         if thread_result is None:
@@ -232,11 +218,10 @@ def check_one_permission(arg_tuple):
         logger.debug('Remove %s.%s action' % (service_name, operation_name))
         return
     except botocore.exceptions.NoAuthTokenError:
-        logger.error(f'\n❌ Credentials expired while testing {service_name}.{operation_name}()')
-        logger.error('   Temporary credentials (ASIA*) have a limited lifetime (usually 1 hour)')
-        logger.error(f'   Successfully tested {OPERATION_COUNTER["count"]} operations before expiration')
-        logger.error('   Tip: Get fresh credentials and run the scan again\n')
-        raise  # Re-raise to stop the scan
+        # NoAuthTokenError can be service-specific (e.g., CodeCatalyst requires registration)
+        # Not necessarily a credential expiration, so just skip this operation
+        logger.debug(f'NoAuthTokenError for {service_name}.{operation_name} (service-specific issue)')
+        return
 
     OPERATION_COUNTER['found'] += 1
     msg = '\033[92m-- %s.%s() worked!\033[0m'
