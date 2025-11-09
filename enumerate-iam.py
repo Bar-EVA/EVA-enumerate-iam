@@ -10,6 +10,7 @@ import subprocess
 import os
 import json
 import re
+from datetime import datetime, timezone
 
 
 def parse_request_file(file_path):
@@ -89,6 +90,31 @@ def parse_request_file(file_path):
         print(f"   SecretKey:     {secret_key[:30]}...{secret_key[-10:]}")
         if session_token:
             print(f"   SessionToken:  {session_token[:80]}...{session_token[-20:]}")
+        
+        # Check expiration time if available
+        expiration = creds.get('Expiration')
+        if expiration:
+            try:
+                # Handle both Unix timestamp (as number) and ISO format strings
+                if isinstance(expiration, (int, float)):
+                    expire_time = datetime.fromtimestamp(expiration, tz=timezone.utc)
+                else:
+                    expire_time = datetime.fromisoformat(str(expiration).replace('Z', '+00:00'))
+                
+                now = datetime.now(timezone.utc)
+                time_remaining = expire_time - now
+                minutes_remaining = int(time_remaining.total_seconds() / 60)
+                
+                if minutes_remaining < 0:
+                    print(f"   ⚠️  Expiration:   ALREADY EXPIRED!")
+                    print(f"   Note: Get fresh credentials before running scan")
+                elif minutes_remaining < 30:
+                    print(f"   ⚠️  Expiration:   {minutes_remaining} minutes remaining (may not complete scan)")
+                else:
+                    print(f"   ⏰ Expiration:   {minutes_remaining} minutes remaining")
+            except Exception as e:
+                print(f"   ⏰ Expiration:   {expiration} (could not parse)")
+        
         print()
         
         return access_key, secret_key, session_token
