@@ -257,6 +257,15 @@ def enumerate_iam(access_key, secret_key, session_token, region, rate_limit=None
     """
     output = dict()
     configure_logging()
+    
+    logger = logging.getLogger()
+    
+    # Validate credentials
+    if not access_key or not secret_key:
+        logger.error("❌ Invalid credentials: access_key or secret_key is empty")
+        return output
+    
+    logger.debug(f"Using credentials - AccessKey: {access_key[:20]}..., SecretKey: {'*' * 20}, SessionToken: {'Yes' if session_token else 'No'}")
 
     # Initialize global rate limiter if requested
     global RATE_LIMITER

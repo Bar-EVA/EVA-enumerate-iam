@@ -55,14 +55,34 @@ def parse_request_file(file_path):
         
         creds = data['Credentials']
         
+        # Debug: Show what keys are available
+        print(f"🔍 Found credential keys: {list(creds.keys())}")
+        
         # Map the fields (note: AWS Cognito uses "SecretKey" not "SecretAccessKey")
         access_key = creds.get('AccessKeyId')
         secret_key = creds.get('SecretKey') or creds.get('SecretAccessKey')
         session_token = creds.get('SessionToken')
         
+        # Strip whitespace and validate
+        if access_key:
+            access_key = str(access_key).strip()
+        if secret_key:
+            secret_key = str(secret_key).strip()
+        if session_token:
+            session_token = str(session_token).strip()
+        
         if not access_key or not secret_key:
             print("❌ Error: AccessKeyId or SecretKey not found in credentials")
             sys.exit(1)
+        
+        # Check if temporary credentials (starting with ASIA) require session token
+        if access_key.startswith('ASIA'):
+            if not session_token:
+                print("❌ Error: AccessKeyId starts with 'ASIA' (temporary credentials) but no SessionToken found")
+                print("   Temporary credentials REQUIRE a SessionToken to work")
+                sys.exit(1)
+        elif not session_token:
+            print("⚠️  Warning: No SessionToken found (may be required for temporary credentials)")
         
         print(f"✅ Loaded credentials from file: {file_path}")
         print(f"   AccessKeyId:   {access_key}")
